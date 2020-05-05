@@ -1,0 +1,26 @@
+{
+  "name": "textual-similarity-universal-sentence-encoder",
+  "version": "1.0.0",
+  "description": "Extract embeddings and group sentences with universal sentence encoder package from TensorFlow.js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "push": "git push https://github.com/jinglescode/textual-similarity-universal-sentence-encoder.git master"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinglescode/textual-similarity-universal-sentence-encoder.git"
+  },
+  "keywords": [
+    "machine-learning",
+    "javascript",
+    "natural-language-processing",
+    "tensorflowjs"
+  ],
+  "author": "Khok Hong Jing (Jingles)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jinglescode/textual-similarity-universal-sentence-encoder/issues"
+  },
+  "homepage": "https://jinglescode.github.io/textual-similarity-universal-sentence-encoder"
+}

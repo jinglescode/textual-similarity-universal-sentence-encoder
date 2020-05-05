@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Sentence Similarity with TensorFlow.js Sentence Encoder - Hong Jing (Jingles)</title>
+  <link rel="icon" type="image/png" href="https://jinglescode.github.io/assets/img/favicon.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel='stylesheet' type='text/css'>
+  <link href="https://jinglescode.github.io/assets/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="https://jinglescode.github.io/assets/css/custom.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link rel="preload" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" as="style" onload="this.rel='stylesheet'">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-49548145-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-49548145-2');
+  </script>
+  <meta property="og:title" content="Sentence Similarity with TensorFlow.js Sentence Encoder - Hong Jing (Jingles)"/>
+  <meta property="og:image" content="https://jinglescode.github.io/assets/img/posts/build-textual-similarity-analysis-web-app-01.webp"/>
+  <meta property="og:description" content="Extract embeddings and group sentences with universal sentence encoder package from TensorFlow.js."/>
+  <meta property="og:url" content="https://jinglescode.github.io/textual-similarity-universal-sentence-encoder" />
+</head>
+<body>
+
+  <div class="navbar-fixed">
+    <nav class="z-depth-2 nav-bar" role="navigation">
+      <div class="nav-wrapper container">
+        <a id="logo-container" class="brand-logo truncate">
+          Sentence Similarity with TensorFlow.js Sentence Encoder
+        </a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="https://jinglescode.github.io/" class="tooltipped" data-position="top" data-tooltip="Blog"><i class="fas fa-blog"></i><span id="menu-text">Blog</span></a></li>
+          <li><a href="https://jinglescode.github.io/playground/" class="tooltipped" data-position="top" data-tooltip="Playground"><i class="fas fa-laptop-code"></i><span id="menu-text">Playground</span></a></li>
+          <li><a href="https://github.com/jinglescode" target="_blank"><i class="fab fa-github-square"></i><span id="menu-text">GitHub</span></a></li>
+        </ul>
+        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      </div>
+    </nav>
+    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+  </div>
+  <ul id="slide-out" class="sidenav">
+    <li><a href="https://jinglescode.github.io/" class="tooltipped" data-position="top" data-tooltip="Blog"><i class="fas fa-blog"></i><span id="menu-text">Blog</span></a></li>
+    <li><a href="https://jinglescode.github.io/playground/" class="tooltipped" data-position="top" data-tooltip="Playground"><i class="fas fa-laptop-code"></i><span id="menu-text">Playground</span></a></li>
+    <li><a href="https://github.com/jinglescode" target="_blank"><i class="fab fa-github-square"></i><span id="menu-text">GitHub</span></a></li>
+  </ul>
+
+  <div class="container blog-content">
+
+    <div class="card">
+      <div class="card-content">
+        <h1 class="title grey-text text-darken-4">Sentence Similarity with TensorFlow.js Sentence Encoder</h1>
+        <h5 class="subtitle grey-text text-darken-2">Extract embeddings and group sentences with universal sentence encoder package from TensorFlow.js.</h5>
+      </div>
+      <div class="card-image">
+        <img src="https://jinglescode.github.io/assets/img/posts/build-textual-similarity-analysis-web-app-01.webp" alt="Sentence Similarity with TensorFlow.js Sentence Encoder">
+      </div>
+      <div class="card-content">
+        <p>
+          Have you wondered how search engines understand your queries and match the relevant results? How chatbot extract your intent from your questions and provide the most appropriate response?
+        </p>
+        <p>
+          Universal Sentence Encoder <a href="https://arxiv.org/pdf/1803.11175.pdf" target="_blank">(Cer et al., 2018)</a> is a language model that encodes text into fixed-length embeddings. It aims <b>to convert sentences into semantically-meaningful dense real-valued vectors</b> [<a href="https://jinglescode.github.io/datascience/2020/02/10/build-textual-similarity-analysis-web-app/" target="_blank">read more</a>].
+        </p>
+        <p>
+          Try the demo with your own list of sentences.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="row">
+          <div class="col s12">
+            <h1>Demo</h1>
+            <span class="card-title">Input sentences separate by break line</span>
+
+            <div class="row">
+              <div class="col s12 m8">
+                <div class="input-field col s12" style="height: 300px; overflow:scroll;">
+                  <textarea id="input_sentences" class="materialize-textarea" rows="10"></textarea>
+                  <label for="input_sentences">Input text</label>
+                  <small class="form-text text-muted">Separate sentences by break line</small>
+                </div>
+              </div>
+              <div class="col s12 m4">
+                <div class="input-field col s12">
+                  <label for="input_threshold">Threshold</label>
+                  <input type="text" id="input_threshold" placeholder="example: 0.5" value="0.5">
+                  <small class="form-text text-muted">Sentences with similarity score higher than threshold are grouped together</small>
+                </div>
+                <div class="col s12">
+                  <button class="waves-effect waves-light btn" onclick="onClickAnalyzeSentences()">Analyse Sentences</button>
+                  <div class="preloader-wrapper small active" id="load_fetch_data" style="display:none">
+                    <div class="spinner-layer spinner-green-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col s12">
+            <h1>Grouping Results</h1>
+            <div class="row">
+              <div class="col s12">
+                <div id="output_resultshtml"></div>
+              </div>
+              <div class="col s12">
+                <div id="div_heatmap" style="width:100%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s12 m4">
+        <a href="https://github.com/jinglescode/textual-similarity-universal-sentence-encoder" style="color:#000;">
+          <center>
+            <i class="fab fa-github" style="font-size: 100px;"></i><br/>
+            <span style="font-size:40px;">GitHub Repository</span><br/>
+            <p>Get the completed code</p><br/>
+          </center>
+        </a>
+      </div>
+      <div class="col s12 m4">
+        <a href="https://jinglescode.github.io/playground/" style="color:#000;">
+          <center>
+            <i class="fas fa-laptop-code" style="font-size: 100px;"></i><br/>
+            <span style="font-size:40px;">Playground</span><br/>
+            <p>Check out other projects</p><br/>
+          </center>
+        </a>
+      </div>
+      <div class="col s12 m4">
+        <a href="https://www.linkedin.com/in/jingles/" style="color:#000;">
+          <center>
+            <i class="fab fa-linkedin-in" style="font-size: 100px;"></i><br/>
+            <span style="font-size:40px;">Connect</span><br/>
+            <p>Connect with me on LinkedIn</p><br/>
+          </center>
+        </a>
+      </div>
+    </div>
+
+  </div> <!-- E container -->
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://jinglescode.github.io/assets/js/materialize.min.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <script src="./index.js"></script>
+
+  <script>
+   $(document).ready(function(){
+     $('.tooltipped').tooltip();
+     $('.sidenav').sidenav();
+   });
+  </script>
+
+</body>
+</html>
